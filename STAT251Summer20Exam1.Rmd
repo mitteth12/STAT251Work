@@ -1,0 +1,145 @@
+---
+title: "STAT 251 Summer 20 Exam 1"
+author: "Ethan Mitten"
+date: "6/8/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+
+```{r}
+library(readxl)
+alcohol <- read_excel("alcohol consumption.xlsx")
+```
+
+**2.	What is the mean and the standard deviation of average alcohol consumption for all nations in 2008? **
+
+
+```{r}
+mean(alcohol$`2008`, na.rm = TRUE)
+var(alcohol$`2008`, na.rm = TRUE)
+```
+The mean average alcohol consumption for all nations in 2008 was 6.689 liters and the standard deviation was 24.00625.
+
+
+**3. What is the mean and the standard deviation of average alcohol consumption for European countries in 2008?**
+```{r}
+mean(alcohol$`2008`[alcohol$Continent=="Europe"], na.rm = TRUE)
+var(alcohol$`2008`[alcohol$Continent=="Europe"], na.rm = TRUE)
+```
+The mean average alcohol consumption for European countries in 2008 was 12.15609 liters and the standard deviation was 15.2516.
+
+
+**4.	Which country has the highest consumption of the alcohol in 2005 and the highest consumption in 2008?**
+```{r}
+max(alcohol$`2005`, na.rm = TRUE)
+(alcohol$Country[alcohol$`2005`==18.28])
+max(alcohol$`2008`, na.rm = TRUE)
+(alcohol$Country[alcohol$`2008`==23.01])
+```
+The country with the highest alcohol consumption in 2005 was North Korea and the country with the highest alcohol consumption in 2008 was Moldova.
+
+
+**5.	In 2008, do people drink more than 6 liter a year on average? Do an appropriate hypothesis test. State null and alternative hypotheses and make your decision based on p-value (α =.05). Clearly state your conclusion in the context.**
+```{r}
+t.test(alcohol$`2008`, mu=6, alternative = "greater")
+```
+Null Hypothesis: The true mean of average liters drank a year is 6.
+
+Alternative Hypothesis: The true mean is greater than 6
+
+Decision: The p-value of .02793 is less than .05 confidence level, so we would reject the null hypothesis and conclude that countries drank more than 6 liters on average in 2008.
+
+
+**6.	What is 95% confidence interval for average alcohol consumption for Europe in 2008?  Write down in a sentence what this interval means in the context.**
+```{r}
+t.test(alcohol$`2008`[alcohol$Continent=="Europe"])
+```
+We are 95% confident that the mean average alcohol consumption for Europe in 2008 is between 10.99635 and 13.31583.
+
+
+**7.	Draw a boxplot for average alcohol consumption in 2008 for 4 continents (in one graph). Main title should be Alcohol consumption in 2008 and make all the boxes have different color (pink, green, red, and blue). X axis label should be ‘Continent’ and Y axis label should be ‘Alcohol consumption in liter’. Include your comment on who are consuming more or less alcohol on the average.  Are there any unusual values? Comment on it (them).**
+```{r}
+boxplot(alcohol$`2008`~alcohol$Continent, main= "Alcohol consumption in 2008", col= c("pink", "green", "red", "blue"), xlab = "Continent", ylab = "Alcohol consumption in liter")
+```
+From this boxplot we can see that by comparing continents that on average Asia is consuming the least amount of alcoho whereas Europe is consuming the most alcohol. There are a couple unusual points on the graph. The first point I notice is the one dot for Asia that is all the way up at 20 when the mean of the continent is below 5. Also, from earlier we can see that Moldova in Europe is an outlier. It is also a little surprising to me to see the whole America continent be so close together.
+
+
+**8.	Generate the following summary (means, standard deviations, and sample sizes) table for alcohol consumption in RMarkdown with the appropriate values. Hint: Make a data frame that include mean, standard deviation and sample size information for each continent.**
+```{r}
+library(dplyr)
+Africamean <- mean(alcohol$`2008`[alcohol$Continent=="Africa"], na.rm = TRUE)
+Africavar <- var(alcohol$`2008`[alcohol$Continent=="Africa"],na.rm = TRUE)
+Africasize <- sum(alcohol$Continent=="Africa")
+Americamean <- mean(alcohol$`2008`[alcohol$Continent=="America"],na.rm = TRUE)
+Americavar <- var(alcohol$`2008`[alcohol$Continent=="America"],na.rm = TRUE)
+Americasize <- sum(alcohol$Continent=="America")
+Asiamean <- mean(alcohol$`2008`[alcohol$Continent=="Asia"],na.rm = TRUE)
+Asiavar <- var(alcohol$`2008`[alcohol$Continent=="Asia"],na.rm = TRUE)
+Asiasize <- sum(alcohol$Continent=="Asia")
+Europemean <- mean(alcohol$`2008`[alcohol$Continent=="Europe"],na.rm = TRUE)
+Europevar <- var(alcohol$`2008`[alcohol$Continent=="Europe"],na.rm = TRUE)
+Europesize <- sum(alcohol$Continent=="Europe")
+Country <- c("Africa", "America", "Asia", "Europe")
+Mean <- c(Africamean, Americamean, Asiamean, Europemean)
+Sd.dev. <- c(Africavar, Americavar, Asiavar, Europevar)
+SampleSize <- c(Africasize, Americasize, Asiasize, Europesize)
+frame <- data.frame(Country, Mean, Sd.dev., SampleSize)
+frame
+```
+
+
+**9.	Are there any significant difference in average alcohol consumption between American and African countries in 2008? Do an appropriate hypothesis test and write the results in sentence form. State your conclusion clearly in this context with the reason using the p- value. (α =.05) Check normality assumption using appropriate plot.**
+```{r}
+t.test(alcohol$`2008`[alcohol$Continent=="America"], alcohol$`2008`[alcohol$Continent=="Africa"])
+```
+Based off of the p-value being 2.356e-05 being far less than .05 we would reject the null hypothesis and conclude that the true difference in means is not equal to 0. This gives us the conclusion that there is a significant difference between the amount of average alcohol consumption between American and African countries in 2008.
+
+
+**10.	Is the amount of alcohol consumption in 2005 less than 2008? State the null and alternative hypotheses. State your conclusion clearly in this context with the reason using the p- value. (α =.05)**
+```{r}
+t.test(alcohol$`2008`, alcohol$`2005`, alternative = "less")
+```
+Null hypothesis: True difference in means is equal to 0
+
+Alternative hypothesis: True difference in means is less than 0
+
+Conclusion: Based off of the p-value being .6185 which is greater than .05 we can make the decision to fail to reject the null hypothesis. This means that there is not a significant difference to conclude that 2005 alcohol consumption is less than 2008.
+
+
+**11.	Generate a scatter plot to show relationship between the alcohol consumption in 2005 (X) and 2008 (Y) for different continents. Make the following changes.  Do you see any obvious pattern? Comment about your findings from the plot.**
+```{r}
+confactor <- as.factor(alcohol$Continent)
+alcoholscatter <- plot(alcohol$`2005`, alcohol$`2008`, main = "The average alcohol consumption for 2005 and 2008 for each continent", col= confactor, xlab = "Average alcohol consumption in 2005", ylab = "Average alcohol consumption in 2008", pch= c(1,2,3,4) )
+abline(coef = c(0,1))
+legend("topleft",legend = c("Asia", "Africa", "America", "Europe"), fill = c("red", "yellow", "blue", "darkgreen"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

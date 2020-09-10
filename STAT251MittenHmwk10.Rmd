@@ -1,0 +1,89 @@
+---
+title: "STAT251MittenHmwk10"
+author: "Ethan Mitten"
+date: "6/16/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+survey <- read_excel("Class survey (Five semester combined).xlsx")
+```
+
+**Using set.seed(12345), write a function ‘ BootstrapConfidenceInterval’ with parameters (data, R, confidence level) that returns bootstrap confidence interval. Make the default of confidence level be 95%.  The following steps will lead you to write such function.**
+
+```{r}
+sleep <- survey$`Hours of Sleep`
+set.seed(12345)
+BootstrapConfidenceInterval <- function(data, R, confidencelevel) {
+  a <- matrix(replicate(R, sample(data, 50, replace=T)), byrow=F, ncol=R)
+  amean <-colMeans(a)
+  b <- quantile(amean, probs= confidencelevel)
+}
+partfive <- c(.025, .975)
+```
+
+**(a)	What is 95% confidence interval of the mean sleeping hour of Truman students?**
+
+```{r}
+print(BootstrapConfidenceInterval(sleep, 1000, partfive))
+```
+
+The 95% confidence interval of the mean sleeping hour of Truman students is 6.74975 to 7.28025.
+
+
+**(b)	What is 99% confidence interval of the mean sleeping hour of Truman students?**
+
+```{r}
+partb <- c(.01, .99)
+print(BootstrapConfidenceInterval(sleep, 1000, partb))
+```
+
+The 99% confidence interval of the mean sleeping hour of Truman students is 6.67792 to 7.36. 
+
+
+**Using set.seed(12345), write a function ‘ Bootstraptest’ with parameters (data, R, mu0, alternative) that returns bootstrap p-value. The function should include all possible alternatives, right tailed, left tailed, and tow-sided test.**
+
+
+**Test if Truman students sleeps more than 7 hours a day on the average.**
+```{r}
+set.seed(12345)
+Bootstraptest <- function(data, R, mu0, alternative= c("right", "left", "twosided")) {
+  b <- matrix(replicate(R, sample(data, 50, replace=T)), byrow=F, ncol=R)
+  bmean = colMeans(b)
+  if (alternative== "right")
+    x <- sum(bmean>mu0)
+  print(x/R)
+  if (alternative== "left")
+    d <- sum(bmean<mu0)
+  if (alternative=="twosided")
+    z <- sum(bmean!=mu0)
+  
+}
+Bootstraptest(sleep, 1000, 7, "right")
+```
+
+The p-value of the bootstrap test is .531 meaning that there is not a significant difference for Truman students sleeping greater than 7 hours a day on average.
+
+
+**) Test if Truman female students sleeps less than 7 hours a day on the average.**
+```{r}
+set.seed(12345)
+Bootstraptest <- function(data, R, mu0, alternative= c("right", "left", "twosided")) {
+  b <- matrix(replicate(R, sample(data, 50, replace=T)), byrow=F, ncol=R)
+  bmean = colMeans(b)
+  if (alternative== "left")
+    d <- sum(bmean<mu0)
+  print(d/R)
+  if (alternative=="twosided")
+    z <- sum(bmean!=mu0)
+  
+}
+Bootstraptest(sleep[survey$Sex=='f'], 1000, 7, "left")
+```
+
+The p-value of the bootstrap test is .574 meaning that there is not a significant difference for Truman female students to sleeping less than 7 hours a day on average.
+
+

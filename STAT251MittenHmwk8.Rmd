@@ -1,0 +1,64 @@
+---
+title: "STAT251MittenHmwk8"
+author: "Ethan Mitten"
+date: "6/11/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+enroll <- read_excel("~/Desktop/Junior Summer/STAT 251/statgraduateschool.xlsx")
+```
+
+
+**(a)	First, generate a sample of size n=5 from the enrollment data and calculate the mean (Use set.seed(12345))**
+```{r}
+set.seed(12345)
+enroll_1 <- sample(enroll$FTGradEnrollment, 5)
+mean(enroll_1)
+```
+
+
+**(b)	Repeat (a) R=100 times and generate means from each sample. There will be 100 means. What is the mean of these means? (Keep using set.seed(12345))**
+```{r}
+set.seed(12345); replicate(100, mean(sample(enroll$FTGradEnrollment, 5)))
+mean(replicate(100, mean(sample(enroll$FTGradEnrollment, 5))))
+```
+
+**(c)	Write a function ‘samplingdistribution’ with parameters (data, n, R) where data is the data, n is the sample size, and R is the number of samples. The function should generated R number of samples with sample size n. For each sample calculate the mean of the sample. The function should return the mean of the means. What is samplingdistribution(data, n=5, R=100)?**
+```{r}
+samplingdistribution <- function(data, n, R) {
+  x <- mean(replicate(R, mean(sample(data, n))))
+  return(x)
+}
+samplingdistribution(enroll$FTGradEnrollment, 5,100)
+```
+The mean of a sample of 100 for a sample size of 5 is 55.488.
+
+
+**(d)	Expand the function “samplingdistrubtion” to include standard deviation and histogram for means.**
+```{r}
+samplingdistribution <- function(data, n, R) {
+  x <- replicate(R, mean(sample(data, n)))
+  y <- mean(x)
+  z <- sd(x)
+  aa <- hist(x)
+  all <- list(x, y, z, aa)
+  return(all)
+}
+```
+
+
+**(e)	What is the sampling mean, standard deviation, and the shape for the total enrollment of full-time graduate students when n=50 and R = 100?**
+```{r}
+samplingdistribution(enroll$FTGradEnrollment, 50, 100)
+```
+
+From the data it can be seen that the sampling mean for the total enrollment of full-time graduate students when the sample size is 50 and the number of samples is 100 is 53.67. Furthermore, the standard deviation of the data is 3.63 and the histogram is shown above showing a peak at 55 and the data seems to be close to normally distributed.
+
+
+
+
+

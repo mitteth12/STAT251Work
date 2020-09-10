@@ -1,0 +1,61 @@
+---
+title: "STAT251MittenHmwk8p2"
+author: "Ethan Mitten"
+date: "6/11/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+
+**(a)	Draw a normal probability plot for highway mileage (mpg) using ggplot() function and comment if the distribution close to normal.**
+
+```{r}
+library(ggplot2)
+npp <- ggplot(data = mtcars, aes(sample=mpg)) +
+  stat_qq() + stat_qq_line()
+npp
+```
+
+From this normality plot we can see that the distribution seems to be fairly close to normal.
+
+
+**Make a function “CI” that returns a confidence interval for a mean of a vector. The function “CI” should have parameters of (data vector, confidence level). Use t confidence interval formula, X ̅±t_(α⁄(2,) n-1  )  s/√n  .  Using the function, find the 90% confidence interval for highway mileage.**
+
+```{r}
+CI <- function(data, confidence_level) {
+  a <- c(mean(data)-qt(.90, df=length(data)-1)*sd(data)/sqrt(length(data)), mean(data)+qt(.90, df=length(data)-1)*sd(data)/sqrt(length(data)))
+  return(a)
+}
+
+CI(mtcars$mpg)
+```
+
+Based off the function that was created the 90 percent confidence interval for mpg is 18.69549 to 21.48576.
+
+
+**(c)	Make a function “pvalueformean” that returns p-value (t-test) for one population mean hypothesis (parameters: vector, mu0, alternative). The alternative can be right tailed, left tailed, or two-sided. Using this function, find the p-value for the hypothesis test to see if mpg for cylinder size 8 is different from 20.**
+
+```{r}
+mpg <- mtcars$mpg
+cyl <- mtcars$cyl
+pvalueformean<-function(vector, mu, alternative= c("two-sided", "less", "greater", confint(level = .95))){
+    st<-sqrt(length(vector))*(mean(vector)-mu)/sd(vector)
+    pt(st, df=length(vector))   
+}
+
+c <- c(mpg[cyl=="8"])
+pvalueformean(c, mu=20)
+
+```
+
+From the function pvalueformean the hypothesis test concludes that the pvalue is 2.423099e-06 which is less than the confidence level of 95%. This means that the mpg for cylinder size of 8 is going to be significantly different from 20 mpg.
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,63 @@
+---
+title: "STAT 251 Assignment 4"
+author: "Ethan Mitten"
+date: "6/1/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+mtcars <- read_excel("mtcars.xlsx")
+mtcars <- na.omit(mtcars)
+```
+
+```{r}
+cylinderbar <- barplot(mtcars$cyl, main = "Cylinder Barplot", col = "pink")
+```
+
+```{r}
+cgtable <- table(mtcars$cyl, mtcars$gear)
+cylindergearbar <- barplot(cgtable, main = "Cylinder and Gear Barplot", legend.text = c("4-Cylinder", "6-Cylinder", "8-Cylinder"), col=c("purple","darkgreen","darkred"), xlab= "Number of Gears", ylab="Amount of Cars")
+```
+
+```{r}
+count <- table(mtcars$cyl)
+names(count) <- c("4-Cylinder", "6-Cylinder", "8-Cylinder")
+cylinderpie <- pie(count, main = "Pie Chart of Cylinder")
+```
+
+```{r}
+mpg <- mtcars$mpg
+mpghist <- hist(mpg, xlab = "Miles per Gallon (MPG)", ylab = "Amount of Cars", main = "Histogram of MPG", col = "purple" )
+```
+
+From the graph it seems like the data is fairly normally distributed. There is a big dip in the data for the 25-30 miles per gallon range, but besides that the trend of the graph looks normally distributed.
+
+```{r}
+cylmpgbox <- boxplot(mpg~mtcars$cyl, main= "Boxplot for MPG for Each Type of Cylinder", xlab = "Type of Cylinder", ylab = "Miles per Gallon (MPG)")
+```
+
+```{r}
+mpghpscatter <- plot(mpg, mtcars$hp, col=mtcars$cyl, main = "MPG Against HP by Cylinder Type", xlab = "Miles per Gallon (MPG)", ylab = "Horsepower")
+abline(lm(mtcars$hp~mpg))
+legend("topright",legend = c("8-Cyl", "6-Cyl", "4-Cyl"), fill = c("gray", "pink", "blue"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,66 @@
+---
+title: "SampleExam1"
+author: "Ethan Mitten"
+date: "6/8/2020"
+output: html_document
+---
+
+```{r}
+library(readxl)
+survey <- read_excel("Class survey (Five semester combined).xlsx")
+```
+
+(a)	What is the mean and standard deviation of sleeping hour for cat loving (ONLY CAT) and dog loving (dog only) students? Fill the table below.
+```{r}
+dogsv <- survey$`Dogs vs. Cats`
+sleep <- survey$`Hours of Sleep`
+catmean <- mean(sleep[dogsv=="cat"])
+dogmean <- mean(sleep[dogsv=="dog"])
+catvar <- var(sleep[dogsv=="cat"])
+dogvar <- var(sleep[dogsv=="dog"])
+dogcatvect <- c(catmean, dogmean, catvar, dogvar)
+table <- matrix(dogcatvect, nrow = 2, ncol = 2, byrow = TRUE)
+colnames(table) <- c("Cat Lovers", "Dog Lovers")
+rownames(table) <- c("Mean", "Standard Deviation")
+table
+```
+(b)	Obtain 95% confidence intervals on the average sleeping hour for cat loving (ONLY CAT) student. Interpret the interval. 
+```{r}
+t.test(sleep[dogsv=="cat"], conf.level = .95)
+```
+(c)	Conduct a hypothesis test to determine if cat (cat only) loving students sleep different amount from dog (dog only) loving students. State the null and alternative hypotheses. State your conclusion clearly in this context with the reason using the p- value.  (α =.05) 
+```{r}
+t.test(sleep[dogsv=="cat"], sleep[dogsv=="dog"])
+```
+(d)	Generate the two histograms in one page (side by side) to show the amount of sleep hour for cat (cat only) loving and dog (dog only) loving students. Main titles should be “sleep for cat lovers” and “sleep for dog lovers”. X axis should be “sleep”. 
+```{r}
+par(mfrow=c(1,2))
+hist(sleep[dogsv=="cat"], main="sleep for cat lovers", xlab = "sleep")
+hist(sleep[dogsv=="dog"], main="sleep for dog lovers", xlab = "sleep")
+```
+(e)	Generate the scatter plot to show relationship between the amount of sleeping hour and the amount of coffee drinking. Make the following changes. (10 pts)
+1.	Main title: Amount of sleep vs. Amount of coffee drinking
+2.	X axis name: Amount of coffee drinking
+3.	Y axis name: Amount of sleeping hour
+4.	Change the point character as red triangle
+5.	Add regression line for each group
+
+```{r}
+plot(survey$`Cups of Coffee`, sleep, main = "Amount of sleep vs. Amount of coffee drinking", xlab = "Amount of coffee drinking", ylab = "Amount of sleeping hour", pch= 2, col="red")
+abline(lm(sleep~survey$`Cups of Coffee`))
+```
+(f)	Generate the bar graph to show the distribution(proportion) of on campus for pet loving and dog (dog only) loving students. (Main title: The pet preference on campus. Make it horizontal. Make the bar of the color of dark blue, purple, red, and pink. Make sure that all the categories are represented and labeled.) 
+```{r}
+counts <- table(dogsv)
+barplot(counts, horiz = TRUE, main = "The pet preference on campus", col = c("darkblue", "purple", "red", "pink"), names.arg = c("both", "dog", "cat", "neither"))
+```
+
+
+
+
+
+
+
+
+
+

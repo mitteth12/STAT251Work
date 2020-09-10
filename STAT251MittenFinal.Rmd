@@ -1,0 +1,193 @@
+---
+title: "FinalExam"
+author: "Ethan Mitten"
+date: "6/23/2020"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+survey <- read_excel("Class survey (Seven semester combined).xlsx")
+```
+
+
+**(a)	What is the sample size, mean, and standard deviation of Hours of sleep for Non coffee drinker (cups of coffee is 0), Moderate Coffee drinker (cups of coffee is larger than 0 but less than 2), and Heavy Coffee drinker (cups of coffee is 2 or larger) Generate the following table. (10 pts)**
+
+```{r}
+survey$`Hours of Sleep` <- as.numeric(gsub('[$,]', '', survey$`Hours of Sleep`))
+survey$`Cups of Coffee` <- as.numeric(gsub('[$,]', '', survey$`Cups of Coffee`))
+ncoffee <- survey$`Hours of Sleep`[survey$`Cups of Coffee`==0]
+mcoffee <- survey$`Hours of Sleep`[survey$`Cups of Coffee`>0 & survey$`Cups of Coffee`<2]
+hcoffee <- survey$`Hours of Sleep`[survey$`Cups of Coffee`>2 | survey$`Cups of Coffee`==2]
+size1 <- c(length(ncoffee), length(mcoffee), length(hcoffee))
+mean1 <- c(mean(ncoffee, na.rm = TRUE), mean(mcoffee, na.rm = TRUE), mean(hcoffee, na.rm = TRUE))
+sd1 <- c(sd(ncoffee, na.rm = TRUE), sd(mcoffee, na.rm = TRUE), sd(hcoffee, na.rm = TRUE))
+tablestats <- c(size1, mean1, sd1)
+tablestats1 <- matrix(data = tablestats, nrow = 3, ncol = 3, byrow = TRUE)
+colnames(tablestats1) <- c("Non Coffee Drinker", "Moderate Coffee Drinker", "Heavy Coffee Drinker")
+rownames(tablestats1) <- c("Sample Size","Mean", "Standard Deviation")
+tablestats1
+```
+
+
+**(b)	Generate three histograms on one page (side by side) as following to show “Hours of sleep” for three different coffee drinking categories. The titles should be “Non Coffee Drinker”, “Moderate Coffee Drinker” and “Heavy Coffee Drinker”. The X axis label for all three graphs should be both “Hours of sleeping”. Change the color of three histogram to light blue, steel blue, and blue. Make the number class as 5 for all histogram. Comment on the difference/similarity of the amount of sleep for three groups.**
+
+
+```{r}
+par(mfrow=c(1,3))
+hist(ncoffee, main = "Non Coffee Drinker", xlab = "Hours of Sleeping", col="lightblue", nclass = 5)
+hist(mcoffee, main = "Moderate Coffee Drinker", xlab = "Hours of Sleeping", col="steelblue", nclass = 5)
+hist(hcoffee, main = "Heavy Coffee Drinker", xlab = "Hours of Sleeping", col="blue", nclass = 5)
+```
+
+One of the similarities that I observed from looking at the different graphs is how similar the mean hours of sleep looks. These graphs have for the most part very similar shapes until you get to the outside hours of sleep. Surprisingly heavy coffee drinkers have the fewest amount of students sleep between 4 to 5 hours a night. The moderate and non coffee drinkers seem to have very spread out ranges in the amount of sleep that the students are getting. 
+
+
+**(c)	Obtain 95% confidence intervals on the mean difference of the sleeping hours between Non Coffee drinker and Coffee drinker (Moderate and Heavy combined). Interpret the interval. Hint: You can use the existing function if you want. (10 pts)**
+
+```{r}
+twocoffee <- survey$`Hours of Sleep`[survey$`Cups of Coffee`>0]
+t.test(ncoffee, twocoffee)
+```
+
+We are 95% confident that the mean difference is between -.04364075 and .35197493. This means that we are 95% confident that the difference between non-coffee drinkers and coffee drinkers will be between these intervals.
+
+
+**(d)	Write a function ‘BCI’ that calculate bootstrap confidence interval. Use three parameters with data: dataframe, R:number of bootstrap, level: confidence level. Find the 95% bootstrap confidence interval for the mean of the sleeping hour for Truman students.  (Use R=1000 and set.seed(12345)) (10 pts)**
+
+```{r}
+sleep <- survey$`Hours of Sleep`
+set.seed(12345)
+BCI <- function(data, R, level) {
+  a <- matrix(replicate(R, sample(data, 50, replace=T)), byrow=F, ncol=R)
+  amean <-colMeans(a)
+  b <- quantile(amean, probs= level)
+}
+interval <- c(.025, .975)
+sleep <- sleep[!is.na(sleep)]
+print(BCI(sleep, 1000, interval))
+```
+
+The 95% confidence interval of the mean sleeping hour of Truman students is 6.75780 to 7.28825.
+
+
+**(e)	Is the mean sleep hours different for Coffee drinkers and Non-Coffee drinkers? Write a function “Simulationtest” that calculates p-value based on simulation test. State the null and alternative hypotheses. State your conclusion clearly in this context with the reason using the p- value. (α =.05) Use set.seed(12345) and 1000 replication. (10 pts)**
+
+```{r}
+set.seed(12345)
+Simulationtest<-function(vec1, vec2,R, alternative="two.sided"){
+    com<-c(vec1, vec2)
+  a<-rep(0,R); b<-0
+  for (i in 1:R) {
+    s1=sample(1:length(com),length(vec1))
+    a[i]=mean(com[s1])-mean(com[-s1])
+    if(alternative=="greater"){if(a[i]>(mean(vec1)-mean(vec2))) {b<-b+1}}
+    if(alternative=="less"){if(a[i]<(mean(vec1)-mean(vec2))) {b<-b+1}}
+    else {if(abs(a[i])>abs(mean(vec1)-mean(vec2))) {b<-b+1}}
+  }
+  b/R
+}
+ncoffee <- ncoffee[!is.na(ncoffee)]
+twocoffee <- twocoffee[!is.na(twocoffee)]
+Simulationtest(ncoffee, twocoffee, 1000)
+```
+
+Null Hypothesis: mu(coffee drinkers)-mu(non-coffee drinkers) = 0
+Alternative Hypothesis: mu(coffee drinkers)-mu(non-coffee drinkers) != 0
+P-Value= .113
+
+Conclusion: Based on the p-value obtained, .113, being greater than the significance level of .05 we would say we do not have significant evidence to suggest that the means of coffee drinkers and non coffee drinkers get signifcantly different amounts of hours of sleep.
+
+
+**Make a function “pvalueforZ” that returns 2 sided z-test p-value for two population mean hypothesis (parameters: vector1, vector2). Using this function, find the p-value for the hypothesis test if the mean sleep hours are different for Coffee drinker and Non coffee drinker.  (Hint: Test statistic for two sample z-test is (X ̅-Y ̅)/√(〖σ_1〗^2/n_1 +〖σ_2〗^2/n_2 )  ).  Is this an appropriate test for the question?**
+
+```{r}
+pvalueforZ <- function(vector1, vector2) {
+  a <- (mean(vector1)-mean(vector2))
+  b <- a/(sqrt(sd(vector1)/length(vector1))+(sd(vector2)/length(vector2)))
+  print(b/length(vector1 & vector2))
+}
+pvalueforZ(ncoffee, twocoffee)
+```
+
+Our p-value from the test was .008 which is less than the .05 signficance level. In terms of finding the pvalue for z-values of two vectors this seems to be like a function that would do that so in terms of what we are trying to accomplish this looks to be an approrpriate test.
+
+
+```{r}
+library(readxl)
+hype <- read_excel("Hypertention.xlsx")
+```
+
+
+**(a)	Is there any evidence of a violation of multiple linear regression assumptions?   List and comment for all multiple regression assumptions and comment based on appropriate figures. Hint: Construct the standardized residual plots and normal probability plots. (10 pts)**
+
+```{r}
+lslmodel <- lm(BP~ stress + age + weight + `surfice area` + duration + `basal pulse`, data = hype)
+layout(matrix(c(1,2,3,4),2,2))
+plot(lslmodel)
+```
+
+Looking first of all at the Residuals vs. Fitted graph it seems like the points are a little scattered, but the line of the points fits fairly well with the residual line. This holds true for the scale-location graph as well. The best visual for normality is the Normal Q-Q graph that shows that the dataset seems to be pretty well normally distributed. The last graph of residuals vs. leverage graph seems to indicate that the points are a good distance for having positive assumptions for the dataset. With all of these plots constructed above there does not seem to be any violation for this dataset.
+
+
+**(b)	Based on Stepwise AIC, what is the best fitted model? (5 pts)**
+
+```{r}
+step(lslmodel)
+```
+
+From the results it looks like the best model looks to be blood pressure with the response variables of weight and age.
+
+
+**(c)	Generates the following table as close as possible. Hint: There are 63 rows for the different model combinations. Round all the values to 2 decimal points. Organize the selection table as following (Best 2 models for each number of variables based on AIC). (15 pts)**
+
+```{r}
+library(MuMIn)
+options(na.action = "na.fail")
+bigmodel <- dredge(lslmodel)
+bigmodel
+```
+
+
+**(d)	Based on all three criteria in (c), suggest the “best” model (fitted model). Please write a paragraph that how Mean arterial blood pressure is related to age, weight body surface area, duration of hypertension, basal pulse, and stress.  Pretend you are the medical researcher and explain the results to the potential high blood pressure patients. (10 pts)**
+
+Based on my findings for examining all the models for this dataset it would seem that there are definitely some main factors in higher blood pressure. Model 38 which was considered the best fit for the data illustrated that the variables basal pulse, age, and weight were highly correlated to blood pressure observations. With that being said for high blood pressure patients one thing to watch for is keeping a healthy weight. You cannot change your age, but you can work on decreasing your weight which could be leading to a higher blood pressure. The basal pulse is not something you can individually control as a variable, so in conclusion based on the available data the recommendation is too watch your weight.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

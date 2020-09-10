@@ -1,0 +1,88 @@
+---
+title: "STAT251MittenHmwk7"
+author: "Ethan Mitten"
+date: "6/9/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(ggplot2)
+```
+
+**(a)	Draw a bar graph for cylinder. Make your own title. Make bars with the color pink (inside the bar is pink).**
+```{r}
+qplot(cyl, data = mtcars, geom = "bar", fill= I("pink"))
+```
+
+
+**(b)	Draw a boxplot of mpg for all cylinder sizes in one graph.**
+```{r}
+qplot(mpg, factor(cyl), data = mtcars, geom = "boxplot",)
+```
+
+
+**(c)	Create a histogram for horse power with bin width =25.**
+```{r}
+qplot(hp, data = mtcars, binwidth=.25, geom = "histogram")
+```
+
+
+**(d)	Generate a scatter plot for horse power (X axis) and mileage (Y axis). Add(make) different colors for different cylinder sizes.**
+```{r}
+qplot(hp, mpg, data = mtcars, colour= cyl)
+```
+
+
+**(e)	Generate scatter plot for engine displacement (disp, X) and mileage(Y). Make separate graphs (in one page) for different cylinder sizes (use facets).**
+```{r}
+qplot(disp, mpg, data = mtcars, facets= .~cyl)
+```
+
+
+**(a)	Draw a bar graph for the number of siblings.**
+```{r}
+library(readxl)
+survey <- read_excel("Class survey (Five semester combined).xlsx")
+ggplot(survey, aes(Siblings)) +
+  geom_bar()
+```
+
+
+**(b)	Draw a scatter plot of the shoe size (Y) and height(X) with different colors for sex?**
+```{r}
+ggplot(survey, aes(Height, `Shoe Size`, color= Sex)) +
+  geom_point()
+```
+
+
+**(c)	Assume Y: Weight and X: Height. Draw a scatter plot with different colors for sex. Include regression lines. Include title as appropriate.**
+```{r}
+ggplot(survey, aes(Height, Weight, color=Sex)) +
+  geom_point() +
+  geom_smooth(method = lm) +
+  labs(title = "Height and Weight by Sex")
+```
+
+
+**(d)	Can you think of any interesting question in class survey dataset? Make your own question(s) and answer it/them using ggplot graph(s). (2 points)**
+
+I want to use this data to make a scatter plot of the calorie intake of a student in comparison to the number of hours socializing. I also want to split the data up by male and female. So essentially my question is are the amount of calories you eat each day based on how much socializing that you do. 
+
+
+```{r}
+ggplot(survey, aes(socializing, `Calories per day`, color=Sex)) +
+  geom_point() +
+  geom_smooth(method = lm) +
+  labs(title = "Socializing vs. Calories by Gender", x= "Hours Socializing in a Week", y="Calorie Intake per Day")
+```
+
+Based on the graph it looks like that there is no correlation between the amount of hours socializing and the calorie intake each day. It can be seen that across the board men eat more each day, and strange enough there is not much variation in calorie intake versus hours socializing in a week at all. The line is almost horizontal which is interesting.
+
+
+
+
+
+
+

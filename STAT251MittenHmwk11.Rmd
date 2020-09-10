@@ -1,0 +1,95 @@
+---
+title: "STAT251MittenHmwk11"
+author: "Ethan Mitten"
+date: "6/17/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+survey <- read_excel("Class survey (Five semester combined).xlsx")
+```
+
+**1.	Write a function ‘indepttest’ with parameters (data, alternatives) that returns p-value for independent two sample t-test. Make the default of alternative as two sided. Call the function with appropriate parameters to answer the question. State the null and alternative hypotheses. State your conclusion clearly in this context with the reason using the p- value.  (α =.05) (Hint: You can use the data in list() form)**
+
+
+```{r}
+dogvect <- c(survey$`Hours of Sleep`[survey$`Dogs vs. Cats`=="dog"])
+catvect <- c(survey$`Hours of Sleep`[survey$`Dogs vs. Cats`=="cat"])
+comb <- c(dogvect, catvect)
+indepttest <- function(data, alternatives=twosided) {
+  a <- replicate(1000, mean(sample(data, size = 50, replace=T)))
+  a1 <- sum(a>=7, na.rm = FALSE)
+  print(a1/1000)
+}
+indepttest(comb)
+```
+
+**(a)	Do cat lovers and dog lovers sleep different amount?**
+
+Null Hypothesis: mu(dogs)-mu(cats) = 0
+Alternative Hypothesis: mu(dogs)-mu(cats) != 0
+P-Value= .978
+
+Conclusion: Based on the p-value obtained, .978, being greater than the significance level of .05 we would say we do not have significant evidence to suggest that the means of dog lovers and cat lovers get signifcantly different amounts of hours of sleep.
+
+**(b)	Do cat lovers sleep more than dog lovers?**
+
+Null Hypothesis: mu(dogs)-mu(cats) = 0
+Alternative Hypothesis: mu(dogs)-mu(cats) > 0
+P-Value= .669
+
+Conclusion: Based on the p-value obtained, .669, being greater than the significance level of .05 we would say we do not have significant evidence to suggest that cat lovers sleep more than dogs lovers.
+
+
+
+**2.	Using set.seed(12345), write a function ‘simulationtest’ with argument (data, R=1000, alternatives) that returns p-value based on simulation test. Make the default of alternative as two-sided. State the null and alternative hypotheses. Call the function with appropriate parameters to answer the question. State the null and alternative hypotheses. State your conclusion clearly in this context with the reason using the p- value.  (α =.05)**
+
+```{r}
+set.seed(12345)
+simulationtest <- function(data, R=1000, alternatives=twosided) {
+  b <- replicate(R, mean(sample(data, size = 50, replace=T)))
+  b1 <- sum(b>=7, na.rm = FALSE)
+  print(b1/R)
+}
+simulationtest(comb)
+```
+
+**(a)	Do cat lovers and dog lovers sleep different amount?**
+
+Null Hypothesis: mu(dogs)-mu(cats) = 0
+Alternative Hypothesis: mu(dogs)-mu(cats) != 0
+P-Value= .985
+
+Conclusion: Based on the p-value obtained, .985, being greater than the significance level of .05 we would say we do not have significant evidence to suggest that the means of dog lovers and cat lovers get signifcantly different amounts of hours of sleep.
+
+
+**(b)	Do cat lovers sleep more than dog lovers?**
+
+Null Hypothesis: mu(dogs)-mu(cats) = 0
+Alternative Hypothesis: mu(dogs)-mu(cats) > 0
+P-Value= .686
+
+Conclusion: Based on the p-value obtained, .686, being greater than the significance level of .05 we would say we do not have significant evidence to suggest that cat lovers sleep more than dogs lovers.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

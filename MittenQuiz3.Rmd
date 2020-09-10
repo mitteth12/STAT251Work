@@ -1,0 +1,42 @@
+---
+title: "Quiz 3 Survey Markdown"
+author: "Ethan Mitten"
+date: "5/31/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+survey <- read_excel("Class survey (Five semester combined).xlsx")
+```
+
+This dataset looks at a bunch of different variables about students, 33 variables in fact. Specifically in this markdown we are taking a look at the variables of semester and hours of sleep. For this markdown we want to just make a graph and a summary for each variable to get a little more insight on them.
+
+```{r}
+semester <- survey$Semester
+summary(semester)
+hist(semester)
+```
+
+From the summary and histogram it can be seen that most students in the survey are in their freshmen and sophomore years. From the summary we can actually see that the median semester is 2 from the data. This graph seems to fit the shape of a right-tail.
+
+```{r}
+sleep <- survey$`Hours of Sleep`
+summary(sleep)
+hist(sleep)
+```
+
+The data for hours of sleep shows a lot of inconsistency between students. However if you took out the half-hour bars for sleep this almost looks like a normal distribution graph with 7 being the peak. When doing the summary this confirms that 7 hours of sleep is really the peak of the data with the median being 7 and the mean being 7.019.
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,92 @@
+---
+title: "STAT251MittenHmwk6"
+author: "Ethan Mitten"
+date: "6/9/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+stress <- read_excel("~/Desktop/Junior Summer/STAT 251/stress.xlsx")
+```
+
+
+**(a)	Plot a scatterplots between Y and Xs. Is there any potential relationship observed?**
+```{r}
+plot(stress~`firm size`+ `years in position` + salary + age, data = stress)
+```
+
+Based on the scatterplots it can be seen that all of the variables seem to have a potentially positive relationship with stress except for age. 
+
+**(b)	Check all the inference assumptions. Are there any violation?**
+```{r}
+lslmodel <- lm(stress~`firm size`+ `years in position` + salary + age, data = stress)
+layout(matrix(c(1,2,3,4),2,2))
+plot(lslmodel)
+```
+
+From the plots there does not seem to be any violations.
+
+
+**(c)	Find the least square line.**
+```{r}
+lslmodel <- lm(stress~`firm size`+ `years in position` + salary + age, data = stress)
+summary(lslmodel)
+```
+
+**(d)	Estimate all coefficients using 95% confidence intervals.**
+```{r}
+lslmodel$coef
+```
+
+**(e)	Are stress level and the amount of salary significantly related when all other variables were already considered?**
+```{r}
+summary(lslmodel)
+```
+
+Looking at the summary of the regression model it can be seen that with the salary line the estimate is at 2.1 and the p-value is 1.77e-06. Based on a 95% significance level we would say that these variables are significantly related.
+
+
+**(f)	Using stepwise AIC find the best model.**
+```{r}
+step(lslmodel)
+```
+
+Using the stepwise AIC it looks like the best model involves all of the variables except years in position.
+
+
+**(g)	What is the coefficient of determination for the model chosen from (f)? Interpret it.**
+```{r}
+determine <- lm(stress~`firm size` + salary + age, data = stress)
+summary(determine)
+```
+
+The coefficient of determination is .6767. This is explaining the proportion of the total variation that is being explained by the regression line, and because we have a coefficient of determination of .6767 we would say this is a fairly good fit as it is closer to 1 than to 0.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

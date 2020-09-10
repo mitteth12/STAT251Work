@@ -1,0 +1,101 @@
+---
+title: "STAT 251 Assignment 5"
+author: "Ethan Mitten"
+date: "6/2/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+mtcars <- read_excel("mtcars.xlsx")
+attach(mtcars)
+```
+
+```{r}
+Q1 <- t.test(mtcars$mpg, conf.level = .95)
+```
+
+```{r}
+Q1$conf.int
+```
+There is a 95% chance that the true mean of the column mpg falls in the range of 17.91768 and 22.26357.
+
+```{r}
+t.test(mpg[cyl=='8'], conf.level = .95)
+```
+There is a 95% chance that the true mean of mpg for 8-cylinder cars in the data is between 13.62187 and 16.57813.
+
+```{r}
+t.test(mpg[vs=='1'], mu=20, alternative = "greater")
+```
+Based off the p-value being .003691 we would reject the null hypothesis because .003691 < .05. This would mean that based on our test the true mean of mpg when vs is equal to 1 is greater than 20.
+
+```{r}
+t.test(mpg[hp>'200'], mpg[hp<=200])
+```
+Based on the test and the p-value obtained from the test the mpg is not signficantly different for cars under 200 horsepower in comparison to cars above 200 horsepower. This is confirmed because the p-value of .6566 > .05.
+
+```{r}
+library(readxl)
+survey <- read_excel("Class survey (Seven semester combined).xlsx")  
+survey$`Shoe Size` <- as.numeric(as.character(survey$`Shoe Size`))
+```
+
+```{r}
+shoesize <- survey$`Shoe Size`
+handed <- survey$Handed
+t.test(shoesize[handed=='L'], shoesize[handed=='r'])
+```
+Based on the test and the p-value obtained from the test the shoe size is not signficantly different based on whether you are right or left handed. This is confirmed because the p-value of .3038 > .05.
+
+```{r}
+sleep <- survey$`Hours of Sleep`
+dogcat <- c(survey$DogsCats)
+hist(sleep[dogcat=='cat'], ylim= c(0,100), col = "purple", main = "Hours of Sleep for Students Who Own a Cat", xlab = "Hours of Sleep", ylab = "Number of Students")
+hist(sleep[dogcat=='dog'], ylim = c(0,100), col = "darkgreen", main = "Hours of Sleep for Students Who Own a Dog", xlab = "Hours of Sleep", ylab = "Number of Students")
+t.test(sleep[dogcat=='cat'], sleep[dogcat=='dog'])
+```
+In this test I want to see if the hours of sleep a student gets is based on whether or not the student has a dog or a cat. Based on the test and the p-value obtained from the test the hours of sleep seems to be signficantly different based on whether you own a cat or a dog. This can be confirmed because the p-value of .0104 <.05.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

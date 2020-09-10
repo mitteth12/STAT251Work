@@ -1,0 +1,157 @@
+---
+title: "STAT251MittenHmwk3"
+author: "Ethan Mitten"
+date: "6/1/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+Flint <- read_excel("Flint-Samples-FINAL.xlsx")
+```
+
+With some discrepancies from Michigan officials in regard to the lead-level of the city of Flint's water supply Virginia Tech University conducted their own research and sampled 271 homes in 9 different wards in an attempt to show the public transparency on the actual lead-levels in the water supply in Flint. The main question being addressed with this data is looking at a better overall view of the iron levels after the first draw, 45 seconds after flushing and two minutes after flushing, and also the difference in iron levels for each of the 9 wards in the city of Flint.
+
+```{r}
+summary(Flint)
+```
+
+```{r}
+Pb1 <- Flint$`Pb Bottle 1 (ppb) - First Draw`
+Pb2 <- Flint$`Pb Bottle 2 (ppb) - 45 secs flushing`
+Pb3 <- Flint$`Pb Bottle 3 (ppb) - 2 mins flushing`
+Pb1 <- Pb1[0:271]
+Pb2 <- Pb2[0:271]
+Pb2 <- as.numeric(gsub('[$,]', '', Pb2))
+Pb3 <- Pb3[0:271]
+Pb1box <- boxplot(Pb1, main="Boxplot for Pb in Bottle 1", xlab= "Samples", ylab= "Pb of the Water in (ppb)", col= "red",  ylim = c(0,30))
+Pb2box <- boxplot(Pb2, main="Boxplot for Pb in Bottle 2", xlab= "Samples", ylab= "Pb of the Water in (ppb)", col= "darkgreen", ylim = c(0,30))
+Pb3box <- boxplot(Pb3, main="Boxplot for Pb in Bottle 3", xlab= "Samples", ylab= "Pb of the Water in (ppb)", col= "purple", ylim = c(0,30))
+```
+From these boxplots we see that the pb in the water slowly decreases over time with quite a few outliers in the mix.
+  
+```{r}
+Ward <- Flint$Ward
+Ward <- Ward[0:271]
+wardcomparison <- plot(Ward, Pb1, col="red", ylab = "Pb of the Water in (ppb)", main= "Pb Levels for Each Ward", pch=19)
+points(Ward, Pb2, col="darkgreen", pch=19)
+points(Ward, Pb3, col="purple", pch=19)
+legend(0,150,legend = c("Pb1", "Pb2", "Pb3"), fill = c("red", "darkgreen", "purple"))
+```
+This graph gives us a better depiction of what the iron levels looked like for each individual ward in the city of Flint. From the data Ward 6 seems to have a significant amount of data showing pb levels over 50 whereas most other Wards only have a couple of points or none at all.
+  
+```{r}
+var1 <- c(var(Pb1), var(Pb2), var(Pb3))
+mean1 <- c(mean(Pb1), mean(Pb2), mean(Pb3))
+tablestats <- c(mean1, var1)
+tablestats1 <- matrix(data = tablestats, nrow = 2, ncol = 3, byrow=TRUE)
+colnames(tablestats1) <- c("Pb1", "Pb2", "Pb3")
+rownames(tablestats1) <- c("Mean", "Standard Dev")
+tablestats1
+```
+  
+```{r}
+p11m <- mean(Pb1[Ward=="1"])
+p12m <- mean(Pb1[Ward=="2"])
+p13m <- mean(Pb1[Ward=="3"])
+p14m <- mean(Pb1[Ward=="4"])
+p15m <- mean(Pb1[Ward=="5"])
+p16m <- mean(Pb1[Ward=="6"])
+p17m <- mean(Pb1[Ward=="7"])
+p18m <- mean(Pb1[Ward=="8"])
+p19m <- mean(Pb1[Ward=="9"])
+Ward1Mean <- c(p11m,p12m,p13m,p14m,p15m,p16m,p17m,p18m,p19m)
+```
+  
+```{r}
+p21m <- mean(Pb2[Ward=="1"])
+p22m <- mean(Pb2[Ward=="2"])
+p23m <- mean(Pb2[Ward=="3"])
+p24m <- mean(Pb2[Ward=="4"])
+p25m <- mean(Pb2[Ward=="5"])
+p26m <- mean(Pb2[Ward=="6"])
+p27m <- mean(Pb2[Ward=="7"])
+p28m <- mean(Pb2[Ward=="8"])
+p29m <- mean(Pb2[Ward=="9"])
+Ward2Mean <- c(p21m,p22m,p23m,p24m,p25m,p26m,p27m,p28m,p29m)
+```
+  
+```{r}
+p31m <- mean(Pb3[Ward=="1"])
+p32m <- mean(Pb3[Ward=="2"])
+p33m <- mean(Pb3[Ward=="3"])
+p34m <- mean(Pb3[Ward=="4"])
+p35m <- mean(Pb3[Ward=="5"])
+p36m <- mean(Pb3[Ward=="6"])
+p37m <- mean(Pb3[Ward=="7"])
+p38m <- mean(Pb3[Ward=="8"])
+p39m <- mean(Pb3[Ward=="9"])
+Ward3Mean <- c(p31m,p32m,p33m,p34m,p35m,p36m,p37m,p38m,p39m)
+```
+
+```{r}
+WardMeans <- c(Ward1Mean, Ward2Mean, Ward3Mean)
+WardMeans1 <- matrix(WardMeans, nrow = 9, ncol = 3)
+colnames(WardMeans1) <- c("Pb1 Mean", "Pb2 Mean", "Pb3 Mean")
+rownames(WardMeans1) <- c("Ward1", "Ward2", "Ward3", "Ward4", "Ward5", "Ward6", "Ward7", "Ward8", "Ward9")
+```
+
+```{r}
+p11v <- var(Pb1[Ward=="1"])
+p12v <- var(Pb1[Ward=="2"])
+p13v <- var(Pb1[Ward=="3"])
+p14v <- var(Pb1[Ward=="4"])
+p15v <- var(Pb1[Ward=="5"])
+p16v <- var(Pb1[Ward=="6"])
+p17v <- var(Pb1[Ward=="7"])
+p18v <- var(Pb1[Ward=="8"])
+p19v <- var(Pb1[Ward=="9"])
+Ward1Var <- c(p11v,p12v,p13v,p14v,p15v,p16v,p17v,p18v,p19v)
+```
+  
+```{r}
+p21v <- var(Pb2[Ward=="1"])
+p22v <- var(Pb2[Ward=="2"])
+p23v <- var(Pb2[Ward=="3"])
+p24v <- var(Pb2[Ward=="4"])
+p25v <- var(Pb2[Ward=="5"])
+p26v <- var(Pb2[Ward=="6"])
+p27v <- var(Pb2[Ward=="7"])
+p28v <- var(Pb2[Ward=="8"])
+p29v <- var(Pb2[Ward=="9"])
+Ward2Var <- c(p21v,p22v,p23v,p24v,p25v,p26v,p27v,p28v,p29v)
+```
+  
+```{r}
+p31v <- var(Pb3[Ward=="1"])
+p32v <- var(Pb3[Ward=="2"])
+p33v <- var(Pb3[Ward=="3"])
+p34v <- var(Pb3[Ward=="4"])
+p35v <- var(Pb3[Ward=="5"])
+p36v <- var(Pb3[Ward=="6"])
+p37v <- var(Pb3[Ward=="7"])
+p38v <- var(Pb3[Ward=="8"])
+p39v <- var(Pb3[Ward=="9"])
+Ward3Var <- c(p31v,p32v,p33v,p34v,p35v,p36v,p37v,p38v,p39v)
+```
+
+```{r}
+WardVar <- c(Ward1Var, Ward2Var, Ward3Var)
+WardVar1 <- matrix(WardVar, nrow = 9, ncol = 3)
+colnames(WardVar1) <- c("Pb1 Std", "Pb2 Std", "Pb3 Std")
+rownames(WardVar1) <- c("Ward1", "Ward2", "Ward3", "Ward4", "Ward5", "Ward6", "Ward7", "Ward8", "Ward9")
+```
+
+```{r}
+finaltable <- c(WardMeans1, WardVar1)
+finaltable1 <- matrix(finaltable, nrow = 9, ncol = 6)
+colnames(finaltable1) <- c("Pb1 Mean", "Pb2 Mean", "Pb3 Mean", "Pb1 Std", "Pb2 Std", "Pb3 Std")
+rownames(finaltable1) <- c("Ward1", "Ward2", "Ward3", "Ward4", "Ward5", "Ward6", "Ward7", "Ward8", "Ward9")
+finaltable1
+```
+
+Looking at the data the standout datapoint is the Pb2 Std of Ward 2. This is a significantly larger point than any other ward. Looking through the data one of the entries for Ward 2 has iron levels of 1051. I do not have enough background in the science field to understand the significance of the 1051 number, but based of the trend of the data this is a very unusual result. Otherwise, the data seems to follow the earlier plot of the iron levels stacked against the different wards. Ward 6 and Ward 8 seem to have had the most dramatic effect from this. It was stated in an article by nrdc.org that most cities should look at addressing an issue if the lead levels are above 5 ppm, and should definetly without a doubt start making changes if it goes above 15 ppm. From the table above it can be seen that not only did every ward except Ward 1 pass the 5 ppm, but Ward 6 and almost Ward 8 passed the 15 ppm mark, and these are means of samples taken for that entire section of the city.
+
+

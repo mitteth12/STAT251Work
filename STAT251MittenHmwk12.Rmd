@@ -1,0 +1,46 @@
+---
+title: "STAT251MittenHmwk12"
+author: "Ethan Mitten"
+date: "6/19/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(readxl)
+survey <- read_excel("Class survey (Five semester combined).xlsx")
+library(broom)
+```
+
+```{r}
+tablemaker <- function(y, x) {
+  y <- as.matrix(y)
+  x <- as.matrix(x)
+  n <- length(y)
+  m1 <- lm(y~x)
+  K <- length(m1$coefficients)-1
+  R <- glance(m1)$r.squared
+  AIC <- AIC(m1)
+  AICc <- AIC(m1)-2*(K+1)+(n*(n+K+1)/(n-K-1-2))
+  cbind(R, AIC, AICc)
+}
+one <- tablemaker(survey$`Hours of Sleep`, survey$`Cups of Coffee`)
+two <- tablemaker(survey$`Hours of Sleep`, survey$`Hours spent studying per week`)
+three <- tablemaker(survey$`Hours of Sleep`, survey$`Hours spent working per week`)
+four <- tablemaker(survey$`Hours of Sleep`, cbind(survey$`Cups of Coffee`, survey$`Hours spent studying per week`))
+five <- tablemaker(survey$`Hours of Sleep`, cbind(survey$`Cups of Coffee`, survey$`Hours spent working per week`))
+six <- tablemaker(survey$`Hours of Sleep`, cbind(survey$`Hours spent studying per week`, survey$`Hours spent working per week`))
+seven <- tablemaker(survey$`Hours of Sleep`, cbind(survey$`Cups of Coffee`, survey$`Hours spent studying per week`, survey$`Hours spent working per week`))
+bigtable <- matrix(c(one, two, three, four, five, six, seven), nrow=7, ncol=3, byrow=TRUE)
+colnames(bigtable) <- c("R-Squared", "AIC", "AICc")
+rownames(bigtable) <- c("X1", "X2", "X3", "X1,X2", "X1,X3", "X2,X3", "X1,X2,X3")
+bigtable
+```
+
+Off of the results it looks like the best possible model will be the model of sleeping hour and cups of coffee drink. The next best model, very close, to the first model would be looking at sleeping hour and its correlation to hours of studying and hours of work.
+
+
+
+
+
